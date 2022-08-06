@@ -20,8 +20,8 @@ type coord struct {
 type direction int
 type tickMsg time.Time
 
-func tickEvery() tea.Cmd {
-	return tea.Tick(time.Millisecond*100, func(t time.Time) tea.Msg {
+func tickEvery(d time.Duration) tea.Cmd {
+	return tea.Tick(d, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
 }
@@ -42,6 +42,7 @@ type model struct {
 	heading      direction
 	nextHeading  direction
 	length       int
+	tickDuration time.Duration
 }
 
 func initialModel() model {
@@ -50,11 +51,12 @@ func initialModel() model {
 		heading:      right,
 		nextHeading:  right,
 		length:       5,
+		tickDuration: time.Millisecond * 150,
 	}
 }
 
 func (m model) Init() tea.Cmd {
-	return tickEvery()
+	return tickEvery(m.tickDuration)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -117,7 +119,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		m.body = append(tail, newHead)
-		return m, tickEvery()
+		return m, tickEvery(m.tickDuration)
 	}
 
 	// Return the updated model to the Bubble Tea runtime for processing.
