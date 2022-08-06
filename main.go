@@ -110,11 +110,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 
-		startIndex := len(m.body) - m.length + 1
-		if startIndex < 0 {
-			startIndex = 0
+		tailStartIndex := len(m.body) - m.length + 1
+		if tailStartIndex < 0 {
+			tailStartIndex = 0
 		}
-		tail := m.body[startIndex:]
+		tail := m.body[tailStartIndex:]
 		if contains(tail, newHead) {
 			// The snake has collided with itself.
 			return m, tea.Quit
