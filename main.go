@@ -33,17 +33,23 @@ const (
 	left
 )
 
+func isHorizontal(d direction) bool {
+	return d == left || d == right
+}
+
 type model struct {
-	body    []coord
-	heading direction
-	length  int
+	body         []coord
+	heading      direction
+	nextHeading  direction
+	length       int
 }
 
 func initialModel() model {
 	return model{
-		body:    []coord{{x: 0, y: 0}},
-		heading: right,
-		length:  10,
+		body:         []coord{{x: 0, y: 0}},
+		heading:      right,
+		nextHeading:  right,
+		length:       5,
 	}
 }
 
@@ -65,30 +71,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "up":
-			if m.heading == right || m.heading == left {
-				m.heading = up
-			}
+			m.nextHeading = up
 
 		case "down":
-			if m.heading == right || m.heading == left {
-				m.heading = down
-			}
+			m.nextHeading = down
 
 		case "left":
-			if m.heading == up || m.heading == down {
-				m.heading = left
-			}
+			m.nextHeading = left
 
 		case "right":
-			if m.heading == up || m.heading == down {
-				m.heading = right
-			}
+			m.nextHeading = right
 
 		}
 
 	case tickMsg:
-		currentHead := m.body[len(m.body)-1]
-		newHead := currentHead
+		newHead := m.body[len(m.body)-1]
+
+		// Update heading
+		if isHorizontal(m.heading) != isHorizontal(m.nextHeading) {
+			m.heading = m.nextHeading
+		}
+
 		switch m.heading {
 		case up:
 			newHead.y--
