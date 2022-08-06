@@ -132,22 +132,22 @@ func contains(s []coord, e coord) bool {
 }
 
 func (m model) View() string {
-	s := "╭" + strings.Repeat("─", cols) + "╮\n"
+	s := "╭─" + strings.Repeat("──", cols) + "╮\n"
 
 	for r := 0; r < rows; r++ {
-		s += "│"
+		s += "│ "
 		for c := 0; c < cols; c++ {
 			pos := coord{x: c, y: r}
 			if contains(m.body, pos) {
-				s += "o"
+				s += "o "
 			} else {
-				s += " "
+				s += "  "
 			}
 		}
 		s += "│\n"
 	}
 
-	s += "╰" + strings.Repeat("─", cols) + "╯\n"
+	s += "╰─" + strings.Repeat("──", cols) + "╯\n"
 
 	// Send the UI for rendering
 	return s
