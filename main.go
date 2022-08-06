@@ -99,21 +99,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case right:
 			new_head.x++
 		}
+
 		if new_head.x < 0 || new_head.x >= cols || new_head.y < 0 || new_head.y >= rows {
 			return m, tea.Quit
-		} else {
-			start_index := len(m.body) - m.length + 1
-			if start_index < 0 {
-				start_index = 0
-			}
-			tail := m.body[start_index:]
-			if contains(tail, new_head) {
-				// The snake has collided with itself.
-				return m, tea.Quit
-			}
-			m.body = append(tail, new_head)
-			return m, tickEvery()
 		}
+
+		start_index := len(m.body) - m.length + 1
+		if start_index < 0 {
+			start_index = 0
+		}
+		tail := m.body[start_index:]
+		if contains(tail, new_head) {
+			// The snake has collided with itself.
+			return m, tea.Quit
+		}
+		m.body = append(tail, new_head)
+		return m, tickEvery()
 	}
 
 	// Return the updated model to the Bubble Tea runtime for processing.
