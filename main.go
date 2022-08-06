@@ -87,33 +87,33 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case tickMsg:
-		current_head := m.body[len(m.body)-1]
-		new_head := current_head
+		currentHead := m.body[len(m.body)-1]
+		newHead := currentHead
 		switch m.heading {
 		case up:
-			new_head.y--
+			newHead.y--
 		case down:
-			new_head.y++
+			newHead.y++
 		case left:
-			new_head.x--
+			newHead.x--
 		case right:
-			new_head.x++
+			newHead.x++
 		}
 
-		if new_head.x < 0 || new_head.x >= cols || new_head.y < 0 || new_head.y >= rows {
+		if newHead.x < 0 || newHead.x >= cols || newHead.y < 0 || newHead.y >= rows {
 			return m, tea.Quit
 		}
 
-		start_index := len(m.body) - m.length + 1
-		if start_index < 0 {
-			start_index = 0
+		startIndex := len(m.body) - m.length + 1
+		if startIndex < 0 {
+			startIndex = 0
 		}
-		tail := m.body[start_index:]
-		if contains(tail, new_head) {
+		tail := m.body[startIndex:]
+		if contains(tail, newHead) {
 			// The snake has collided with itself.
 			return m, tea.Quit
 		}
-		m.body = append(tail, new_head)
+		m.body = append(tail, newHead)
 		return m, tickEvery()
 	}
 
