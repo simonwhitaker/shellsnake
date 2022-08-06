@@ -7,6 +7,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 const rows = 16
@@ -137,6 +138,7 @@ func contains(s []coord, e coord) bool {
 }
 
 func (m model) View() string {
+	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#ccff88"))
 	s := "╭─" + strings.Repeat("──", cols) + "╮\n"
 
 	for r := 0; r < rows; r++ {
@@ -144,7 +146,7 @@ func (m model) View() string {
 		for c := 0; c < cols; c++ {
 			pos := coord{x: c, y: r}
 			if contains(m.body, pos) {
-				s += "o "
+				s += style.Render("o ")
 			} else {
 				s += "  "
 			}
