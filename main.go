@@ -9,40 +9,40 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const Rows = 16
-const Cols = 16
+const rows = 16
+const cols = 16
 
 type coord struct {
 	x int
 	y int
 }
 
-type Direction int
-type TickMsg time.Time
+type direction int
+type tickMsg time.Time
 
 func tickEvery() tea.Cmd {
 	return tea.Tick(time.Millisecond*100, func(t time.Time) tea.Msg {
-		return TickMsg(t)
+		return tickMsg(t)
 	})
 }
 
 const (
-	Up Direction = iota
-	Right
-	Down
-	Left
+	up direction = iota
+	right
+	down
+	left
 )
 
 type model struct {
 	body    []coord
-	heading Direction
+	heading direction
 	length  int
 }
 
 func initialModel() model {
 	return model{
 		body:    []coord{{x: 0, y: 0}},
-		heading: Right,
+		heading: right,
 		length:  10,
 	}
 }
@@ -65,41 +65,41 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "up":
-			if m.heading == Right || m.heading == Left {
-				m.heading = Up
+			if m.heading == right || m.heading == left {
+				m.heading = up
 			}
 
 		case "down":
-			if m.heading == Right || m.heading == Left {
-				m.heading = Down
+			if m.heading == right || m.heading == left {
+				m.heading = down
 			}
 
 		case "left":
-			if m.heading == Up || m.heading == Down {
-				m.heading = Left
+			if m.heading == up || m.heading == down {
+				m.heading = left
 			}
 
 		case "right":
-			if m.heading == Up || m.heading == Down {
-				m.heading = Right
+			if m.heading == up || m.heading == down {
+				m.heading = right
 			}
 
 		}
 
-	case TickMsg:
+	case tickMsg:
 		current_head := m.body[len(m.body)-1]
 		new_head := current_head
 		switch m.heading {
-		case Up:
+		case up:
 			new_head.y--
-		case Down:
+		case down:
 			new_head.y++
-		case Left:
+		case left:
 			new_head.x--
-		case Right:
+		case right:
 			new_head.x++
 		}
-		if new_head.x < 0 || new_head.x >= Cols || new_head.y < 0 || new_head.y >= Rows {
+		if new_head.x < 0 || new_head.x >= cols || new_head.y < 0 || new_head.y >= rows {
 			return m, tea.Quit
 		} else {
 			start_index := len(m.body) - m.length + 1
@@ -108,6 +108,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			tail := m.body[start_index:]
 			if contains(tail, new_head) {
+				// The snake has collided with itself.
 				return m, tea.Quit
 			}
 			m.body = append(tail, new_head)
@@ -130,11 +131,11 @@ func contains(s []coord, e coord) bool {
 }
 
 func (m model) View() string {
-	s := "╭" + strings.Repeat("─", Cols) + "╮\n"
+	s := "╭" + strings.Repeat("─", cols) + "╮\n"
 
-	for r := 0; r < Rows; r++ {
+	for r := 0; r < rows; r++ {
 		s += "│"
-		for c := 0; c < Cols; c++ {
+		for c := 0; c < cols; c++ {
 			pos := coord{x: c, y: r}
 			if contains(m.body, pos) {
 				s += "o"
@@ -145,7 +146,7 @@ func (m model) View() string {
 		s += "│\n"
 	}
 
-	s += "╰" + strings.Repeat("─", Cols) + "╯\n"
+	s += "╰" + strings.Repeat("─", cols) + "╯\n"
 
 	// Send the UI for rendering
 	return s
