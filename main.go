@@ -20,12 +20,13 @@ type direction int
 type tickMsg time.Time
 
 type model struct {
-	body         []coord
-	food         coord
-	heading      direction
-	nextHeading  direction
-	length       int
-	tickDuration time.Duration
+	body           []coord
+	food           coord
+	foodGlyphIndex int
+	heading        direction
+	nextHeading    direction
+	length         int
+	tickDuration   time.Duration
 }
 
 const (
@@ -41,14 +42,17 @@ const (
 	left
 )
 
+var foodGlyphs = [...]string{"🍌", "🍎", "🍊", "🍐", "🍰"}
+
 func initialModel() model {
 	return model{
-		body:         []coord{{x: 0, y: 0}},
-		food:         coord{x: 6, y: 0},
-		heading:      right,
-		nextHeading:  right,
-		length:       initLength,
-		tickDuration: time.Millisecond * 150,
+		body:           []coord{{x: 0, y: 0}},
+		food:           coord{x: 6, y: 0},
+		foodGlyphIndex: 0,
+		heading:        right,
+		nextHeading:    right,
+		length:         initLength,
+		tickDuration:   time.Millisecond * 150,
 	}
 }
 
@@ -109,6 +113,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if newHead == m.food {
 			m.length++
 			m.food = getRandomCoord(append(m.body, newHead))
+			m.foodGlyphIndex = (m.foodGlyphIndex + 1) % len(foodGlyphs)
 		}
 
 		tailStartIndex := len(m.body) - m.length + 1
@@ -142,7 +147,7 @@ func (m model) View() string {
 		for c := 0; c < cols; c++ {
 			pos := coord{x: c, y: r}
 			if pos == m.food {
-				s += "🍌"
+				s += foodGlyphs[m.foodGlyphIndex]
 			} else if pos == m.body[len(m.body)-1] {
 				s += "😄"
 			} else if contains(m.body, pos) {
