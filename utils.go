@@ -35,3 +35,14 @@ func contains(s []coord, e coord) bool {
 	}
 	return false
 }
+
+func appendHeadingIfLegal(headings []direction, newHeading direction) []direction {
+	// It's only legal to turn 90 degrees at a time. If the direction being
+	// appended would result in an illegal turn then discard it and return
+	// headings unchanged.
+	lastHeading := headings[len(headings)-1]
+	if isHorizontal(lastHeading) != isHorizontal(newHeading) {
+		return append(headings, newHeading)
+	}
+	return headings
+}

@@ -20,13 +20,22 @@ type direction int
 type tickMsg time.Time
 
 type model struct {
-	body           []coord
-	food           coord
+	// The coordinates of the body of the snake, ordered from tail to head.
+	body []coord
+
+	// The coordinates of the current food.
+	food coord
+
+	// The index of the current food glyph.
 	foodGlyphIndex int
-	heading        direction
-	nextHeading    direction
-	length         int
-	tickDuration   time.Duration
+
+	// The heading(s) of the snake. As keys are pressed, we append to this list,
+	// and "play back" the changes one tick at a time.
+	headings []direction
+
+	// The current length of the snake
+	length       int
+	tickDuration time.Duration
 }
 
 const (
@@ -49,8 +58,7 @@ func initialModel() model {
 		body:           []coord{{x: 0, y: 0}},
 		food:           coord{x: 6, y: 0},
 		foodGlyphIndex: 0,
-		heading:        right,
-		nextHeading:    right,
+		headings:       []direction{right},
 		length:         initLength,
 		tickDuration:   time.Millisecond * 150,
 	}
@@ -74,28 +82,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "up":
-			m.nextHeading = up
+			m.headings = appendHeadingIfLegal(m.headings, up)
 
 		case "down":
-			m.nextHeading = down
+			m.headings = appendHeadingIfLegal(m.headings, down)
 
 		case "left":
-			m.nextHeading = left
+			m.headings = appendHeadingIfLegal(m.headings, left)
 
 		case "right":
-			m.nextHeading = right
+			m.headings = appendHeadingIfLegal(m.headings, right)
 
 		}
 
 	case tickMsg:
 		newHead := m.body[len(m.body)-1]
 
-		// Update heading. You can only turn 90 degrees at a time.
-		if isHorizontal(m.heading) != isHorizontal(m.nextHeading) {
-			m.heading = m.nextHeading
+		if len(m.headings) > 1 {
+			m.headings = m.headings[1:]
 		}
+		heading := m.headings[0]
 
-		switch m.heading {
+		switch heading {
 		case up:
 			newHead.y--
 		case down:
