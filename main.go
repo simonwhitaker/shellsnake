@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
@@ -40,18 +41,30 @@ func isHorizontal(d direction) bool {
 
 type model struct {
 	body         []coord
+	food         coord
 	heading      direction
 	nextHeading  direction
 	length       int
 	tickDuration time.Duration
 }
 
+func getRandomCoord(exclude []coord) coord {
+	for {
+		x := rand.Intn(cols)
+		y := rand.Intn(rows)
+		if !contains(exclude, coord{x: x, y: y}) {
+			return coord{x: x, y: y}
+		}
+	}
+}
+
 func initialModel() model {
 	return model{
 		body:         []coord{{x: 0, y: 0}},
+		food:         coord{x: 6, y: 0},
 		heading:      right,
 		nextHeading:  right,
-		length:       5,
+		length:       3,
 		tickDuration: time.Millisecond * 150,
 	}
 }
@@ -110,6 +123,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 
+		if newHead == m.food {
+			m.length++
+			m.food = getRandomCoord(m.body)
+		}
+
 		tailStartIndex := len(m.body) - m.length + 1
 		if tailStartIndex < 0 {
 			tailStartIndex = 0
@@ -145,7 +163,9 @@ func (m model) View() string {
 		s += "│ "
 		for c := 0; c < cols; c++ {
 			pos := coord{x: c, y: r}
-			if contains(m.body, pos) {
+			if pos == m.food {
+				s += "🍌"
+			} else if contains(m.body, pos) {
 				s += style.Render("o ")
 			} else {
 				s += "  "
