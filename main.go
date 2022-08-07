@@ -160,7 +160,7 @@ func (m model) View() string {
 	}
 
 	s += "├" + strings.Repeat("──", cols) + "┤\n"
-	s += "│" + footerStyle.Render("→ ← ↓ ↑, q to quit") + "│\n"
+	s += "│" + footerStyle.Render("↑ ↓ ← →, q to quit") + "│\n"
 	s += "╰" + strings.Repeat("──", cols) + "╯\n"
 
 	// Send the UI for rendering
