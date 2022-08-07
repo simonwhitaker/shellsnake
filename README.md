@@ -5,7 +5,7 @@ A simply snake game written using [Bubbletea - a powerful little TUI framework](
 # To play
 
 ```sh
-go run main.go
+go run .
 ```
 
 Or without checking out the repo:

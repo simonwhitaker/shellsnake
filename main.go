@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -10,12 +9,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-)
-
-const (
-	rows       = 16
-	cols       = 16
-	initLength = 3
 )
 
 type coord struct {
@@ -26,23 +19,6 @@ type coord struct {
 type direction int
 type tickMsg time.Time
 
-func tickEvery(d time.Duration) tea.Cmd {
-	return tea.Tick(d, func(t time.Time) tea.Msg {
-		return tickMsg(t)
-	})
-}
-
-const (
-	up direction = iota
-	right
-	down
-	left
-)
-
-func isHorizontal(d direction) bool {
-	return d == left || d == right
-}
-
 type model struct {
 	body         []coord
 	food         coord
@@ -52,15 +28,18 @@ type model struct {
 	tickDuration time.Duration
 }
 
-func getRandomCoord(exclude []coord) coord {
-	for {
-		x := rand.Intn(cols)
-		y := rand.Intn(rows)
-		if !contains(exclude, coord{x: x, y: y}) {
-			return coord{x: x, y: y}
-		}
-	}
-}
+const (
+	rows       = 16
+	cols       = 16
+	initLength = 3
+)
+
+const (
+	up direction = iota
+	right
+	down
+	left
+)
 
 func initialModel() model {
 	return model{
@@ -148,15 +127,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Return the updated model to the Bubble Tea runtime for processing.
 	// Note that we're not returning a command.
 	return m, nil
-}
-
-func contains(s []coord, e coord) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
 
 func (m model) View() string {
