@@ -145,10 +145,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	headerStyle := lipgloss.NewStyle().Bold(true).Width(cols * 2).Align(lipgloss.Center)
 	footerStyle := lipgloss.NewStyle().Faint(true).Width(cols * 2).Align(lipgloss.Center)
+	crossBar := strings.Repeat("─", cols*2)
 
-	s := "╭" + strings.Repeat("──", cols) + "╮\n"
+	s := "╭" + crossBar + "╮\n"
 	s += "│" + headerStyle.Render("Score: "+strconv.Itoa(m.length-initLength)) + "│\n"
-	s += "├" + strings.Repeat("──", cols) + "┤\n"
+	s += "├" + crossBar + "┤\n"
 
 	for r := 0; r < rows; r++ {
 		s += "│"
@@ -167,9 +168,9 @@ func (m model) View() string {
 		s += "│\n"
 	}
 
-	s += "├" + strings.Repeat("──", cols) + "┤\n"
+	s += "├" + crossBar + "┤\n"
 	s += "│" + footerStyle.Render("↑ ↓ ← →, q to quit") + "│\n"
-	s += "╰" + strings.Repeat("──", cols) + "╯\n"
+	s += "╰" + crossBar + "╯\n"
 
 	// Send the UI for rendering
 	return s
