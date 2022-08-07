@@ -90,7 +90,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		newHead := m.body[len(m.body)-1]
 
-		// Update heading
+		// Update heading. You can only turn 90 degrees at a time.
 		if isHorizontal(m.heading) != isHorizontal(m.nextHeading) {
 			m.heading = m.nextHeading
 		}
