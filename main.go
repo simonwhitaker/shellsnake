@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -11,8 +12,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-const rows = 16
-const cols = 16
+const (
+	rows       = 16
+	cols       = 16
+	initLength = 3
+)
 
 type coord struct {
 	x int
@@ -64,7 +68,7 @@ func initialModel() model {
 		food:         coord{x: 6, y: 0},
 		heading:      right,
 		nextHeading:  right,
-		length:       3,
+		length:       initLength,
 		tickDuration: time.Millisecond * 150,
 	}
 }
@@ -156,17 +160,23 @@ func contains(s []coord, e coord) bool {
 }
 
 func (m model) View() string {
-	style := lipgloss.NewStyle().Foreground(lipgloss.Color("#ccff88"))
-	s := "╭─" + strings.Repeat("──", cols) + "╮\n"
+	headerStyle := lipgloss.NewStyle().Bold(true).Width(cols * 2).Align(lipgloss.Center)
+	footerStyle := lipgloss.NewStyle().Faint(true).Width(cols * 2).Align(lipgloss.Center)
+
+	s := "╭" + strings.Repeat("──", cols) + "╮\n"
+	s += "│" + headerStyle.Render("Score: "+strconv.Itoa(m.length-initLength)) + "│\n"
+	s += "├" + strings.Repeat("──", cols) + "┤\n"
 
 	for r := 0; r < rows; r++ {
-		s += "│ "
+		s += "│"
 		for c := 0; c < cols; c++ {
 			pos := coord{x: c, y: r}
 			if pos == m.food {
 				s += "🍌"
+			} else if pos == m.body[len(m.body)-1] {
+				s += "😄"
 			} else if contains(m.body, pos) {
-				s += style.Render("o ")
+				s += "🐛"
 			} else {
 				s += "  "
 			}
@@ -174,13 +184,9 @@ func (m model) View() string {
 		s += "│\n"
 	}
 
-	s += "├─" + strings.Repeat("──", cols) + "┤\n"
-	instructions := "→ ← ↓ ↑, q to quit"
-	width := cols * 2
-	fmtString := fmt.Sprintf("│ %%-%ds│\n", width)
-	s += fmt.Sprintf(fmtString, instructions)
-	// s += "│ " + instructions + strings.Repeat("  ", cols-len(instructions)/2) + "│\n"
-	s += "╰─" + strings.Repeat("──", cols) + "╯\n"
+	s += "├" + strings.Repeat("──", cols) + "┤\n"
+	s += "│" + footerStyle.Render("→ ← ↓ ↑, q to quit") + "│\n"
+	s += "╰" + strings.Repeat("──", cols) + "╯\n"
 
 	// Send the UI for rendering
 	return s
