@@ -154,6 +154,12 @@ func (m model) View() string {
 		s += "│\n"
 	}
 
+	s += "├─" + strings.Repeat("──", cols) + "┤\n"
+	instructions := "→ ← ↓ ↑, q to quit"
+	width := cols * 2
+	fmtString := fmt.Sprintf("│ %%-%ds│\n", width)
+	s += fmt.Sprintf(fmtString, instructions)
+	// s += "│ " + instructions + strings.Repeat("  ", cols-len(instructions)/2) + "│\n"
 	s += "╰─" + strings.Repeat("──", cols) + "╯\n"
 
 	// Send the UI for rendering
