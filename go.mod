@@ -1,4 +1,4 @@
-module example.com/bubbletea-snake
+module github.com/simonwhitaker/bubblesnake
 
 go 1.18
 
