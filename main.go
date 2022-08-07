@@ -108,7 +108,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if newHead == m.food {
 			m.length++
-			m.food = getRandomCoord(m.body)
+			m.food = getRandomCoord(append(m.body, newHead))
 		}
 
 		tailStartIndex := len(m.body) - m.length + 1
