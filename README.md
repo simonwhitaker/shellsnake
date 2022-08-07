@@ -11,5 +11,5 @@ go run .
 Or without checking out the repo:
 
 ```sh
-go run github.com/simonwhitaker/bubblesnake
+go run github.com/simonwhitaker/bubblesnake@latest
 ```
