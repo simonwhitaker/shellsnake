@@ -7,3 +7,9 @@ A simply snake game written using [Bubbletea - a powerful little TUI framework](
 ```sh
 go run main.go
 ```
+
+Or without checking out the repo:
+
+```sh
+go run github.com/simonwhitaker/bubblesnake
+```
