@@ -36,6 +36,7 @@ type model struct {
 	// The current length of the snake
 	length       int
 	tickDuration time.Duration
+	hasCrashed   bool
 }
 
 const (
@@ -61,6 +62,7 @@ func initialModel() model {
 		headings:       []direction{right},
 		length:         initLength,
 		tickDuration:   time.Millisecond * 150,
+		hasCrashed:     false,
 	}
 }
 
@@ -115,6 +117,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		if newHead.x < 0 || newHead.x >= cols || newHead.y < 0 || newHead.y >= rows {
+			m.hasCrashed = true
 			return m, tea.Quit
 		}
 
@@ -131,6 +134,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		tail := m.body[tailStartIndex:]
 		if contains(tail, newHead) {
 			// The snake has collided with itself.
+			m.hasCrashed = true
 			return m, tea.Quit
 		}
 		m.body = append(tail, newHead)
@@ -147,6 +151,15 @@ func (m model) View() string {
 	footerStyle := lipgloss.NewStyle().Faint(true).Width(cols * 2).Align(lipgloss.Center)
 	crossBar := strings.Repeat("─", cols*2)
 
+	var headGlyph, bodyGlyph string
+	if m.hasCrashed {
+		headGlyph = "💀"
+		bodyGlyph = "🍖"
+	} else {
+		headGlyph = "😄"
+		bodyGlyph = "🐛"
+	}
+
 	s := "╭" + crossBar + "╮\n"
 	s += "│" + headerStyle.Render("Score: "+strconv.Itoa(m.length-initLength)) + "│\n"
 	s += "├" + crossBar + "┤\n"
@@ -158,9 +171,9 @@ func (m model) View() string {
 			if pos == m.food {
 				s += foodGlyphs[m.foodGlyphIndex]
 			} else if pos == m.body[len(m.body)-1] {
-				s += "😄"
+				s += headGlyph
 			} else if contains(m.body, pos) {
-				s += "🐛"
+				s += bodyGlyph
 			} else {
 				s += "  "
 			}
