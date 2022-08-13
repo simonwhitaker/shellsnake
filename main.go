@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -37,6 +36,7 @@ type model struct {
 	length       int
 	tickDuration time.Duration
 	hasCrashed   bool
+	highScore    int
 }
 
 const (
@@ -63,7 +63,12 @@ func initialModel() model {
 		length:         initLength,
 		tickDuration:   time.Millisecond * 150,
 		hasCrashed:     false,
+		highScore:      0,
 	}
+}
+
+func (m model) score() int {
+	return m.length - initLength
 }
 
 func (m model) Init() tea.Cmd {
@@ -82,6 +87,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// These keys should exit the program.
 		case "ctrl+c", "q":
 			return m, tea.Quit
+
+		case " ":
+			if m.hasCrashed {
+				highScore := m.highScore
+				m = initialModel()
+				m.highScore = highScore
+				return m, tickEvery(m.tickDuration)
+			}
 
 		case "up":
 			m.headings = appendHeadingIfLegal(m.headings, up)
@@ -118,7 +131,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if newHead.x < 0 || newHead.x >= cols || newHead.y < 0 || newHead.y >= rows {
 			m.hasCrashed = true
-			return m, tea.Quit
+			return m, nil
 		}
 
 		if newHead == m.food {
@@ -135,9 +148,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if contains(tail, newHead) {
 			// The snake has collided with itself.
 			m.hasCrashed = true
-			return m, tea.Quit
+			return m, nil
 		}
 		m.body = append(tail, newHead)
+
+		if m.score() > m.highScore {
+			m.highScore = m.score()
+		}
+
 		return m, tickEvery(m.tickDuration)
 	}
 
@@ -147,21 +165,36 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	headerStyle := lipgloss.NewStyle().Bold(true).Width(cols * 2).Align(lipgloss.Center)
 	footerStyle := lipgloss.NewStyle().Faint(true).Width(cols * 2).Align(lipgloss.Center)
 	crossBar := strings.Repeat("─", cols*2)
 
-	var headGlyph, bodyGlyph string
+	scoreStyle := lipgloss.NewStyle().Bold(true)
+
+	var highScoreStyle lipgloss.Style
+
+	if m.score() < m.highScore {
+		highScoreStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#999999"))
+	} else {
+		highScoreStyle = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#00ff00"))
+	}
+
+	var headGlyph, bodyGlyph, footerMsg string
 	if m.hasCrashed {
 		headGlyph = "💀"
 		bodyGlyph = "🍖"
+		footerMsg = "Space to start, q to quit"
 	} else {
 		headGlyph = "😄"
 		bodyGlyph = "🐛"
+		footerMsg = "↑ ↓ ← →, q to quit"
 	}
 
+	scoreStr := scoreStyle.Render(fmt.Sprintf("Score: %d", m.score()))
+	highScoreStr := highScoreStyle.Render(fmt.Sprintf("High Score: %d", m.highScore))
+	scoreSpacerWidth := cols*2 - lipgloss.Width(scoreStr) - lipgloss.Width(highScoreStr)
+
 	s := "╭" + crossBar + "╮\n"
-	s += "│" + headerStyle.Render("Score: "+strconv.Itoa(m.length-initLength)) + "│\n"
+	s += "│" + scoreStyle.Render(scoreStr) + strings.Repeat(" ", scoreSpacerWidth) + highScoreStyle.Render(highScoreStr) + "│\n"
 	s += "├" + crossBar + "┤\n"
 
 	for r := 0; r < rows; r++ {
@@ -182,7 +215,7 @@ func (m model) View() string {
 	}
 
 	s += "├" + crossBar + "┤\n"
-	s += "│" + footerStyle.Render("↑ ↓ ← →, q to quit") + "│\n"
+	s += "│" + footerStyle.Render(footerMsg) + "│\n"
 	s += "╰" + crossBar + "╯\n"
 
 	// Send the UI for rendering
