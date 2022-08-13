@@ -189,8 +189,8 @@ func (m model) View() string {
 		footerMsg = "↑ ↓ ← →, q to quit"
 	}
 
-	scoreStr := scoreStyle.Render(fmt.Sprintf("Score: %d", m.score()))
-	highScoreStr := highScoreStyle.Render(fmt.Sprintf("High Score: %d", m.highScore))
+	scoreStr := scoreStyle.Render(fmt.Sprintf(" Score: %d", m.score()))
+	highScoreStr := highScoreStyle.Render(fmt.Sprintf("High Score: %d ", m.highScore))
 	scoreSpacerWidth := cols*2 - lipgloss.Width(scoreStr) - lipgloss.Width(highScoreStr)
 
 	s := "╭" + crossBar + "╮\n"
