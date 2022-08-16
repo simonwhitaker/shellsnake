@@ -16,3 +16,10 @@ Or without checking out the repo:
 ```sh
 go run github.com/simonwhitaker/bubblesnake@latest
 ```
+
+# Running with Docker
+
+```sh
+docker build -t bubblesnake .
+docker run --rm -it bubblesnake:latest
+```
