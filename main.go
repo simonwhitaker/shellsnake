@@ -87,6 +87,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// These keys should exit the program.
 		case "ctrl+c", "q":
+			// Try to persist high score
+			config, _ := LoadConfig()
+			config.HighScore = m.highScore
+			err := config.Save()
+			if err != nil {
+				fmt.Printf("Error saving config: %v", err)
+			}
 			return m, tea.Quit
 
 		case " ":
@@ -223,7 +230,8 @@ func (m model) View() string {
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	p := tea.NewProgram(initialModel(0))
+	config, _ := LoadConfig()
+	p := tea.NewProgram(initialModel(config.HighScore))
 	if err := p.Start(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)
