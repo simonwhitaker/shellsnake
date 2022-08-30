@@ -55,7 +55,7 @@ const (
 
 var foodGlyphs = [...]string{"🍌", "🍎", "🍊", "🍐", "🍰"}
 
-func initialModel() model {
+func initialModel(highScore int) model {
 	return model{
 		body:           []coord{{x: 0, y: 0}},
 		food:           coord{x: 6, y: 0},
@@ -64,7 +64,7 @@ func initialModel() model {
 		length:         initLength,
 		tickDuration:   time.Millisecond * 150,
 		hasCrashed:     false,
-		highScore:      0,
+		highScore:      highScore,
 	}
 }
 
@@ -91,9 +91,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case " ":
 			if m.hasCrashed {
-				highScore := m.highScore
-				m = initialModel()
-				m.highScore = highScore
+				m = initialModel(m.highScore)
 				return m, tickEvery(m.tickDuration)
 			}
 
@@ -225,7 +223,7 @@ func (m model) View() string {
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
-	p := tea.NewProgram(initialModel())
+	p := tea.NewProgram(initialModel(0))
 	if err := p.Start(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)
