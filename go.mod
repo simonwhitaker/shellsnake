@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/charmbracelet/bubbletea v0.22.0
 	github.com/charmbracelet/lipgloss v0.5.0
+	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 )
 
 require (

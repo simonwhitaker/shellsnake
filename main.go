@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"net/url"
 	"os"
 	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/pkg/browser"
 )
 
 type coord struct {
@@ -96,10 +98,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, tea.Quit
 
-		case " ":
+		case " ", "p":
 			if m.hasCrashed {
 				m = initialModel(m.highScore)
 				return m, tickEvery(m.tickDuration)
+			}
+
+		case "t":
+			if m.hasCrashed {
+				tweet := fmt.Sprintf("I just scored %d points in shellsnake! Can you beat me? https://bit.ly/shellsnake", m.score())
+				tweet = url.QueryEscape(tweet)
+				url := fmt.Sprintf("https://twitter.com/intent/tweet?text=%s", tweet)
+				browser.OpenURL(url)
 			}
 
 		case "up":
@@ -188,11 +198,11 @@ func (m model) View() string {
 	if m.hasCrashed {
 		headGlyph = "💀"
 		bodyGlyph = "🍖"
-		footerMsg = "Space to start, q to quit"
+		footerMsg = "(p)lay, (t)weet, (q)uit"
 	} else {
 		headGlyph = "😄"
 		bodyGlyph = "🐛"
-		footerMsg = "↑ ↓ ← →, q to quit"
+		footerMsg = "↑ ↓ ← →, (q)uit"
 	}
 
 	scoreStr := scoreStyle.Render(fmt.Sprintf(" Score: %d", m.score()))
