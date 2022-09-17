@@ -1,4 +1,4 @@
-module github.com/simonwhitaker/bubblesnake
+module github.com/simonwhitaker/emojisnake
 
 go 1.18
 

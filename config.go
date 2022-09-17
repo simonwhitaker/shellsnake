@@ -15,7 +15,7 @@ func configFilePath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	configFile := filepath.Join(userConfigDir, "bubblesnake", "config.json")
+	configFile := filepath.Join(userConfigDir, "emojisnake", "config.json")
 	return configFile, nil
 }
 
