@@ -1,4 +1,4 @@
-module github.com/simonwhitaker/emojisnake
+module github.com/simonwhitaker/shellsnake
 
 go 1.18
 

@@ -8,12 +8,12 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY *.go ./
-RUN go build -o /emojisnake
+RUN go build -o /shellsnake
 
 FROM alpine:3.16
 
 WORKDIR /
 
-COPY --from=build /emojisnake /emojisnake
+COPY --from=build /shellsnake /shellsnake
 
-CMD [ "/emojisnake" ]
+CMD [ "/shellsnake" ]

@@ -1,8 +1,8 @@
-# Emoji Snake
+# shellsnake
 
-A simply snake game written using [Bubbletea - a powerful little TUI framework](https://github.com/charmbracelet/bubbletea).
+Play snake in your shell!
 
-<img src="https://user-images.githubusercontent.com/116432/184492979-b12266d5-6b8b-475a-84be-8e47f9f3ccde.gif" width="410" alt="A GIF showing a game of emojisnake in progress" />
+<img src="https://user-images.githubusercontent.com/116432/184492979-b12266d5-6b8b-475a-84be-8e47f9f3ccde.gif" width="410" alt="A GIF showing a game of shellsnake in progress" />
 
 # To play
 
@@ -17,18 +17,18 @@ go run .
 ## Install the binary
 
 ```sh
-go install github.com/simonwhitaker/emojisnake@latest
+go install github.com/simonwhitaker/shellsnake@latest
 ```
 
 Then (assuming `$(go env GOPATH)/bin` is in your path):
 
 ```sh
-emojisnake
+shellsnake
 ```
 
 # Running with Docker
 
 ```sh
-docker build -t emojisnake .
-docker run --rm -it emojisnake:latest
+docker build -t shellsnake .
+docker run --rm -it shellsnake:latest
 ```
