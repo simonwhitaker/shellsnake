@@ -106,7 +106,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "t":
 			if m.hasCrashed {
-				tweet := fmt.Sprintf("I just scored %d points in shellsnake! Can you beat me? https://bit.ly/shellsnake", m.score())
+				tweet := fmt.Sprintf("$ shellsnake\n\nI just scored %d points in #shellsnake! Can you beat me? https://bit.ly/shellsnake", m.score())
 				tweet = url.QueryEscape(tweet)
 				url := fmt.Sprintf("https://twitter.com/intent/tweet?text=%s", tweet)
 				browser.OpenURL(url)
