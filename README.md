@@ -2,7 +2,7 @@
 
 Play snake in your shell!
 
-<img src="https://user-images.githubusercontent.com/116432/184492979-b12266d5-6b8b-475a-84be-8e47f9f3ccde.gif" width="410" alt="A GIF showing a game of shellsnake in progress" />
+<img src="https://user-images.githubusercontent.com/116432/192135742-7fad5354-da71-426e-aa97-3191593e9d89.gif" width="282" alt="A GIF showing a game of shellsnake in progress" />
 
 # To play
 
