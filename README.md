@@ -6,18 +6,30 @@ Play snake in your shell!
 
 # To play
 
+## Install with Homebrew
+
+```sh
+brew install simonwhitaker/tap/shellsnake
+```
+
+## Install the binary using the Go toolchain
+
+If you have the Go toolchain installed, you can:
+
+```sh
+go install github.com/simonwhitaker/shellsnake@latest
+```
+
+## Download a release
+
+Check the [releases page](https://github.com/simonwhitaker/shellsnake/releases). Download, open the gz/zip file, and run `shellsnake`.
+
 ## Run from source
 
 Clone this repo, then:
 
 ```sh
 go run .
-```
-
-## Install the binary
-
-```sh
-go install github.com/simonwhitaker/shellsnake@latest
 ```
 
 Then (assuming `$(go env GOPATH)/bin` is in your path):
